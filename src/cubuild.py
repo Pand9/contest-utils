@@ -20,7 +20,7 @@ def open_write(filepath: Path):
     return open(str(filepath), "w", encoding="utf8")
 
 
-class ResolveError:
+class ResolveError(Exception):
     def __init__(self, dirs, header_path):
         self._dirs = dirs
         self._header_path = header_path
@@ -46,7 +46,7 @@ class LineDefinition:
         raise NotImplementedError()
 
 
-class CaptureError:
+class CaptureError(Exception):
     def __init__(self, rule, line_def: LineDefinition):
         self.rule = rule
         self.line_def = line_def
@@ -65,7 +65,7 @@ class ParametrizedLineDefinition(LineDefinition):
 
     def capture(self, line):
         index_start = len(self._start)
-        index_end = line.find(sub=self._end, start=len(self._start))
+        index_end = line.find(self._end, len(self._start))
         if index_end == -1:
             raise CaptureError(self, line)
         return line[index_start:index_end]
@@ -143,10 +143,11 @@ def run(libdir: Path, input_file_path: Path, output_file_path: Path):
     onefile.extend(StructureDefinitions.get_file_header())
 
     def _rec(p):
+        if p in visited_filenames:
+            return
+        visited_filenames.add(p)
         cppfile = CPPFile(p)
         for dep in cppfile.read_deps():
-            if dep in visited_filenames:
-                continue
             _rec(resolver.resolve(dep))
         onefile.extend(cppfile.get_content_for_onefile())
 
@@ -182,7 +183,7 @@ if __name__ == "__main__":
         with open_read(configpath) as f:
             config = json.load(f)
 
-        libdir = Path(configpath, config["libdir"])
+        libdir = Path(configpath.parent, config["libdir"])
 
         run(libdir, Path(args.source), Path(args.target_singlefile))
     _run()
