@@ -27,5 +27,10 @@ release.e: $(deps)
 
 all: $(default) onefile.e verbose.e release.e
 
+coverage: debug.e
+	lcov -d . -c > lcov.info
+	genhtml lcov.info -o html
+	firefox -new-window html/index.html
+
 clean:
-	rm *.e onefile.cc
+	rm -rf html *.e onefile.cc *.gcno *.gcda lcov.info
