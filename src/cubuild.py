@@ -156,34 +156,14 @@ def run(libdir: Path, input_file_path: Path, output_file_path: Path):
     with open_write(output_file_path) as f:
         f.write("\n".join(onefile))
 
-def search_config(config_name):
-    d = Path(os.getcwd())
-    while d:
-        f = d / config_name
-        if f.exists():
-            return f
-        d = d.parent
-
 if __name__ == "__main__":
     def _run():
         p = argparse.ArgumentParser()
-        p.add_argument("-c", "--configpath", required=False,
-                       help="Config path. By default, search upward for cu.json")
-        p.add_argument("-i", "--source", required=True, help="Path to source file to build")
+        p.add_argument("source", help="Path to source file to build")
         p.add_argument("-o", "--target-singlefile", required=True, help="Path to a target single file")
+        p.add_argument("-l", "--includes-lib", required=True, help="Path to include library")
         p.add_argument("-v", "--verbose", action="store_true")
         args = p.parse_args()
-
         logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="%(message)s")
-
-        if args.configpath is not None:
-            configpath = Path(args.configpath)
-        else:
-            configpath = search_config("cu.json")
-        with open_read(configpath) as f:
-            config = json.load(f)
-
-        libdir = Path(configpath.parent, config["libdir"])
-
-        run(libdir, Path(args.source), Path(args.target_singlefile))
+        run(Path(args.includes_lib), Path(args.source), Path(args.target_singlefile))
     _run()
