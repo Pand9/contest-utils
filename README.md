@@ -2,22 +2,12 @@ Documentation - work in progress. If you are interested, please contact me, I'll
 
 # Contest Utilities
 Manage your code library for competitions like [codeforces.com](http://codeforces.com).
-- Work with many files and "copy-paste" them automatically, before submitting, with utility `cubuild`.
-- Keep submitted file small - only actually included files are pasted by `cubuild`.
+- Work with many files and "copy-paste" them automatically, before submitting, with tool `cubuild`.
+- Keep submitted file small - only actually included files are pasted.
 
-## Future plans
-- Protect your code library from regressions by using solved problems as regression tests.
-All you have to do is download tests from contest's page and point them to `cu`.
+## Usage
+    cubuild source.cc -o source_all_in_single_file.cc -l path/to/your/includes/
 
-#### Todo
-- example/: add Makefile and dir structure
-- workspace generator
-- usage docs
-- `cusubmit`: wrapper for Codeforces API, with potential to be extensible for other sites
-- convenient adding hand-written tests
-- support in example/Makefile for many source files
-- `culibtest add`, `culibtest run` `culibtest list` - library tests based on solved problems  
+### Example integration with make
 
-
-##### Fixes
-- deliver lib path from command line, instead of file - so that it can be defined in on place, e.g. shell variable
+Take a look at a README file in [examples/](examples/README.md) directory.
